@@ -1,0 +1,110 @@
+# service: drugvlab
+
+# frameworkVersion: "3"
+
+# custom:
+#   region: "ap-northeast-2"
+#   userId: "473130344367"
+
+# provider:
+#   name: aws
+#   runtime: provided.al2 # Indicates custom runtime provided by the container image
+#   lambdaHashingVersion: 20201221 # AWS Lambda container image support
+#   stage: production
+#   region: ap-northeast-2
+#   deploymentBucket:
+#     name: drugvlab-be-python-311
+#   deploymentPrefix: serverless-drugvlab-merge
+#   iam:
+#     role:
+#       statements:
+#         # S3
+#         - Effect: Allow
+#           Action:
+#             - s3:*
+#             - s3-object-lambda:*
+#           Resource:
+#             - arn:aws:s3:::drugvlab-bucket
+#             - arn:aws:s3:::drugvlab-bucket/*
+#             - arn:aws:s3:::drugvlab-library
+#             - arn:aws:s3:::drugvlab-library/*
+#         # DynamoDB
+#         - Effect: Allow
+#           Action:
+#             - dynamodb:*
+#           Resource:
+#             - arn:aws:dynamodb:${self:custom.region}:${self:custom.userId}:table/*
+#             - arn:aws:dynamodb:${self:custom.region}:${self:custom.userId}:table/*/index/*
+#         # Athena
+#         - Effect: Allow
+#           Action:
+#             - athena:*
+#             - glue:*
+#           Resource: "*"
+
+# functions:
+#   merge:
+#     timeout: 900
+#     image:
+#       uri: 473130344367.dkr.ecr.ap-northeast-2.amazonaws.com/tool_merge:latest
+service: drugvlab
+
+frameworkVersion: "3"
+
+custom:
+  region: "ap-northeast-2"
+  userId: "473130344367"
+  logGroup: "drugvlab-ecs-tasks"
+
+provider:
+  name: aws
+  runtime: provided.al2
+  lambdaHashingVersion: 20201221
+  stage: production
+  region: ap-northeast-2
+  deploymentBucket:
+    name: drugvlab-be-python-311
+  deploymentPrefix: serverless-drugvlab-merge
+  iam:
+    role:
+      statements:
+        # S3
+        - Effect: Allow
+          Action:
+            - s3:*
+            - s3-object-lambda:*
+          Resource:
+            - arn:aws:s3:::drugvlab-bucket
+            - arn:aws:s3:::drugvlab-bucket/*
+            - arn:aws:s3:::drugvlab-library
+            - arn:aws:s3:::drugvlab-library/*
+        # DynamoDB
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource:
+            - arn:aws:dynamodb:${self:custom.region}:${self:custom.userId}:table/*
+            - arn:aws:dynamodb:${self:custom.region}:${self:custom.userId}:table/*/index/*
+        # Athena
+        - Effect: Allow
+          Action:
+            - athena:*
+            - glue:*
+          Resource: "*"
+        # CloudWatch Logs
+        - Effect: Allow
+          Action:
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            - logs:CreateLogGroup
+          Resource:
+            - arn:aws:logs:${self:custom.region}:${self:custom.userId}:log-group:${self:custom.logGroup}:*
+            - arn:aws:logs:${self:custom.region}:${self:custom.userId}:log-group:${self:custom.logGroup}:log-stream:*
+
+functions:
+  merge:
+    timeout: 900
+    image:
+      uri: 473130344367.dkr.ecr.ap-northeast-2.amazonaws.com/tool_merge:latest
+    logs:
+      logGroup: ${self:custom.logGroup}

@@ -1,0 +1,28 @@
+
+# Cache files
+/__pycache__/**
+*.bin
+
+# Model files
+*.pth
+
+# Data
+data/*
+!/data/bbb_martins.csv
+!/data/freesolv.csv
+!/data/lipophilicity_az.csv
+!/data/drugbank_fda_approved_sm.csv
+
+# Results
+results/*
+!/results/.gitkeep
+
+# Jupyter notebook
+*.ipynb
+
+terraform
+terraform/
+terraform/*
+git_files/*
+git_files
+git_files/
